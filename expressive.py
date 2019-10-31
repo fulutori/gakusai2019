@@ -191,7 +191,12 @@ if __name__ == '__main__':
 		# スタート画面
 		cv2.imshow(GUIDE_WINDOW_NAME, cv2.resize(cv2.imread('img/start.png'), (GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT)))
 		cv2.imshow(WINDOW_NAME, cv2.resize(cv2.imread('img/stand-by.png'), (WINDOW_WIDTH, WINDOW_HEIGHT)))
-		cv2.waitKey(0)
+		
+		key = cv2.waitKey(0)
+		
+		# Escでプログラム終了
+		if key == ESC_KEY:
+			break
 
 
 		# 表情筋テスト開始
@@ -208,5 +213,3 @@ if __name__ == '__main__':
 	# 終了処理
 	cv2.destroyAllWindows()
 	cap.release()
-
-
