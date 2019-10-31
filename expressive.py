@@ -59,7 +59,19 @@ def scoring():
 				cv2.imshow(GUIDE_WINDOW_NAME, cv2.resize(cv2.imread('img/fail.png'), (GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT)))
 				cv2.waitKey(0)
 
-			
+
+		# 顔を2つ以上認識したとき
+		if len(faces) >= 2:
+			face_width = 0
+			for kao in faces:
+				if kao['faceRectangle']['width'] > face_width:
+					face_width = kao['faceRectangle']['width']
+					temp_face = kao
+
+			# 写真内で一番大きい顔を選択
+			faces = temp_face
+
+		
 		# 笑顔のときだけ別処理
 		if face == 'smile':
 			score.append(round(faces[0]['faceAttributes']['smile'] * 100))
@@ -94,18 +106,19 @@ def plot_polar(values, gender):
 		ax.plot(angles, values, 'o-', linewidth=4)
 		ax.fill(angles, values, alpha=0.25)
 
-		# 各値を描画
-		for idx, num in enumerate(values):
-			ax.text(num*math.cos(angles[idx]), num*math.cos(angles[idx]), num, size=20, color="black")
-			#ax.text(round(460*num*0.01*round(math.cos(math.radians(-40*(idx+1))), 3)), round(460*num*0.01*round(math.sin(math.radians(-40*(idx+1))), 3)), num, size=20, color="black")
-	
+			
 	# 女性(赤)
 	elif gender == 'female':
 		ax.plot(angles, values, 'mo-', linewidth=4)
 		ax.fill(angles, values, 'r', alpha=0.25)
 
+
+	# 点数を描画
+	for idx, num in enumerate(values):
+		ax.text(angles[idx], num, num, size=30, color='black', verticalalignment='center_baseline')
+
 	ax.set_thetagrids(angles[:-1] * 180 / np.pi, labels, size=30)
-	ax.set_rgrids(np.linspace(0, 100, 6), size=20)
+	ax.set_rgrids(np.linspace(0, 100, 6), size=20, color='gray')
 
 	fig.savefig('rader.png')
 	plt.close(fig)
@@ -164,26 +177,32 @@ if __name__ == '__main__':
 	cv2.namedWindow(GUIDE_WINDOW_NAME)
 	cv2.moveWindow(GUIDE_WINDOW_NAME, 1024, 0)
 
-	"""
+	# レーダーチャート検証用
+	gender = 'male'
+	score = [19, 28, 37, 46, 55, 64, 73, 82, 91]
+	
 	# カメラ暗転用画像の用意
 	ret, dummy = cap.read()
 	mask = np.zeros_like(cv2.resize(cv2.flip(dummy, 1), (WINDOW_WIDTH, WINDOW_HEIGHT)))
 	cv2.rectangle(mask, (0, 0), (WINDOW_WIDTH, WINDOW_HEIGHT), (156, 156, 156), -1)
 
 
-	# 表情筋テスト開始
-	score, age, gender = scoring()
-	cv2.imshow(GUIDE_WINDOW_NAME, cv2.resize(cv2.imread('img/result.png'), (GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT)))
-	"""
+	while True:
+		# スタート画面
+		cv2.imshow(GUIDE_WINDOW_NAME, cv2.resize(cv2.imread('img/start.png'), (GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT)))
+		cv2.imshow(WINDOW_NAME, cv2.resize(cv2.imread('img/stand-by.png'), (WINDOW_WIDTH, WINDOW_HEIGHT)))
+		cv2.waitKey(0)
 
-	# レーダーチャート検証用
-	gender = 'male'
-	score = [19, 28, 37, 46, 55, 64, 73, 82, 91]
 
-	# レーダーチャート作成
-	plot_polar(score, gender)
-	cv2.imshow(WINDOW_NAME, cv2.resize(cv2.imread('rader.png'), (WINDOW_WIDTH, WINDOW_HEIGHT)))
-	cv2.waitKey(0)
+		# 表情筋テスト開始
+		score, age, gender = scoring()
+		cv2.imshow(GUIDE_WINDOW_NAME, cv2.resize(cv2.imread('img/result.png'), (GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT)))
+
+
+		# レーダーチャート作成
+		plot_polar(score, gender)
+		cv2.imshow(WINDOW_NAME, cv2.resize(cv2.imread('rader.png'), (WINDOW_WIDTH, WINDOW_HEIGHT)))
+		cv2.waitKey(0)
 
 
 	# 終了処理
