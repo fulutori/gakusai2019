@@ -5,6 +5,8 @@ import japanize_matplotlib
 import numpy as np
 import collections
 import cv2
+import os
+import shutil
 
 KEY = '********************************'
 BASE_URL = 'https://japaneast.api.cognitive.microsoft.com/face/v1.0'
@@ -174,7 +176,7 @@ def plot_polar(values, gender):
 	# 完成したレーダーチャートを保存
 	fig.savefig('rader.png')
 
-
+	
 	cv2.imshow(GUIDE_WINDOW_NAME, result)
 	cv2.waitKey(1)
 	plt.close(fig)
@@ -236,7 +238,7 @@ if __name__ == '__main__':
 
 	
 	# レーダーチャート検証用
-	gender = 'female'
+	gender = 'male'
 	score = [85, 78, 66, 100, 88, 64, 73, 82, 91]
 	
 	
@@ -264,7 +266,7 @@ if __name__ == '__main__':
 
 
 		# 表情筋テスト開始
-		#score, age, gender = scoring()		
+		score, age, gender = scoring()		
 
 
 		# レーダーチャート作成
@@ -277,6 +279,12 @@ if __name__ == '__main__':
 		cv2.imshow(WINDOW_NAME, cv2.imread('rader.png'))
 		cv2.waitKey(0)
 
+		
+		# レーダーチャートを連番で保存
+		files = os.listdir('rader')
+		num = int(sorted(files, reverse=True)[0].replace('.png', ''))+1
+		shutil.copy('rader.png', 'rader/{:04}.png'.format(num))
+		
 
 	# 終了処理
 	cv2.destroyAllWindows()
