@@ -93,6 +93,9 @@ def scoring():
 		gender.append(faces[0]['faceAttributes']['gender'])
 
 
+	# 顔写真を削除
+	os.remove('photo.png')
+
 	# 精度向上の為に9回の平均値を取る
 	age = round(age // 9)
 
