@@ -80,7 +80,6 @@ def scoring():
 			try:
 				faces = [temp_face]
 				print('choice')
-				#face = faces[0]
 			except:
 				print('error')
 				face = [faces[0]]
