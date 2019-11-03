@@ -77,8 +77,13 @@ def scoring():
 					temp_face = kao
 
 			# 写真内で一番大きい顔を選択
-			faces = temp_face
-			print('choice')
+			try:
+				faces = [temp_face]
+				print('choice')
+				#face = faces[0]
+			except:
+				print('error')
+				face = [faces[0]]
 
 		
 		# 笑顔のときだけ別処理
